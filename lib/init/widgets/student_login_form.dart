@@ -156,6 +156,9 @@ class _StudentLoginFormState extends State<StudentLoginForm>
     return Row(
       children: [
         Checkbox(
+          side: WidgetStateBorderSide.resolveWith(
+            (states) => const BorderSide(width: 1.0, color: Colors.white),
+          ),
           checkColor: Colors.white,
           fillColor:
               WidgetStateProperty.all(AppColors.thirdColor.withOpacity(0.5)),
