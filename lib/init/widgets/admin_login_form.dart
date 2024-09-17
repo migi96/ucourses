@@ -160,7 +160,7 @@ class _AdminLoginFormState extends State<AdminLoginForm>
         Checkbox(
           checkColor: Colors.white,
           fillColor:
-              WidgetStateProperty.all(AppColors.thirdColor.withOpacity(0.5)),
+              WidgetStateProperty.all(AppColors.thirdColor.withOpacity(0.8)),
           value: _rememberMe,
           onChanged: (bool? value) {
             setState(() {
