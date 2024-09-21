@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ucourses/core/constants/app_colors.dart';
-import 'package:ucourses/core/constants/app_text.dart';
-import 'package:ucourses/core/constants/app_text_styles.dart';
 import 'package:ucourses/core/shared/widgets/decorators/gradient_container_widget.dart';
+import 'package:ucourses/init/screens/footer_screen.dart';
 import 'package:ucourses/init/widgets/logo_shadow.dart';
 
+import '../../core/constants/constants_exports.dart';
 import '../widgets/widget_exports.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -24,16 +23,14 @@ class _AboutScreenState extends State<AboutScreen>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 8), // Slower animation
       vsync: this,
     )..forward();
 
     logos = [
+      {'image': 'lib/assets/images/icons/logo.png', 'name': AppTexts.appName},
       {'image': 'lib/assets/images/icons/ksa-logo.png', 'name': AppTexts.ksa},
-      {
-        'image': 'lib/assets/images/icons/vision2030-logo.jpg',
-        'name': AppTexts.vision
-      },
+      {'image': 'lib/assets/images/icons/vision.png', 'name': AppTexts.vision},
       {'image': 'lib/assets/images/icons/moe-logo.png', 'name': AppTexts.moe},
       {
         'image': 'lib/assets/images/icons/colleage-logo.jpg',
@@ -67,15 +64,21 @@ class _AboutScreenState extends State<AboutScreen>
       ),
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, 0.5),
+          begin: const Offset(1, 0), // Slide in from the right
           end: Offset.zero,
         ).animate(CurvedAnimation(
           parent: _animationController,
           curve: Interval(start, end, curve: Curves.easeInOut),
         )),
-        child: LogoShadow(
-          logoImage: logo['image']!,
-          companyName: logo['name']!,
+        child: SizedBox(
+          width: 140, // Smaller logo size
+          height: 140,
+          child: LogoShadow(
+            height: 55,
+            width: 55,
+            logoImage: logo['image']!,
+            companyName: logo['name']!,
+          ),
         ),
       ),
     );
@@ -85,52 +88,75 @@ class _AboutScreenState extends State<AboutScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: GradientContainer(
-        myHeight: double.infinity - 60,
-        myWidth: double.infinity - 60,
+        myHeight: double.infinity,
+        myWidth: double.infinity,
         firstGradientColor: AppColors.primaryColor,
         secondGradientColor: AppColors.secondaryColor,
         myChild: SingleChildScrollView(
           child: Column(
             children: [
               const HomeNavigation(),
-              Card(
-                margin: const EdgeInsets.only(
-                    left: 50, right: 50, top: 100, bottom: 70),
-                elevation: 20,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 80, right: 80, bottom: 20, top: 40),
-                  child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              const SizedBox(height: 30),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.8,
+                color: Colors.white,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 0,
+                      child: Image.asset(
+                        '${ImageAssets.backgroundImagePath}about_us_background.png',
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 80, right: 80, top: 40),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildAnimatedLogo({
-                            'image': 'lib/assets/images/icons/logo.png',
-                            'name': AppTexts.appName
-                          }, 0, totalLogos + 3),
-                          const SizedBox(height: 30),
-                          _buildAnimatedText(
-                              AppTexts.aboutContent, 1, totalLogos + 3),
-                          const SizedBox(height: 40),
-                          Wrap(
-                            spacing: 60,
-                            runSpacing: 20,
-                            children: List.generate(logos.length, (index) {
-                              return _buildAnimatedLogo(
-                                  logos[index],
-                                  index + 2,
-                                  totalLogos +
-                                      3); // Start index offset by 2 due to previous widgets
-                            }),
+                          AnimatedBuilder(
+                            animation: _animationController,
+                            builder: (context, child) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Animated Text in the center
+                                  _buildAnimatedText(
+                                      AppTexts.aboutContent, 1, totalLogos + 3),
+                                  const SizedBox(height: 40),
+                                  // Logos (including app logo) at the bottom-right in a row
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children:
+                                          List.generate(logos.length, (index) {
+                                        return _buildAnimatedLogo(
+                                            logos[index],
+                                            index + 2,
+                                            totalLogos +
+                                                3); // Logos with slide animation
+                                      }),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ],
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              const GradientContainer(
+                firstGradientColor: AppColors.primaryColor,
+                secondGradientColor: AppColors.secondaryColor,
+                myWidth: double.infinity,
+                myHeight: 60,
+              ),
+              const FooterScreen()
             ],
           ),
         ),
@@ -150,16 +176,23 @@ class _AboutScreenState extends State<AboutScreen>
       ),
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: const Offset(0, 0.5),
+          begin: const Offset(1, 0), // Slide from the right
           end: Offset.zero,
         ).animate(CurvedAnimation(
           parent: _animationController,
           curve: Interval(start, end, curve: Curves.easeInOut),
         )),
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: Styles.style18.copyWith(fontSize: 16),
+        child: Align(
+          alignment: Alignment.centerRight, // Align the text to the right
+          child: Padding(
+            padding:
+                const EdgeInsets.only(right: 30.0), // Add padding to the right
+            child: Text(
+              text,
+              textAlign: TextAlign.right, // Text aligned to the right
+              style: Styles.style18.copyWith(fontSize: 16),
+            ),
+          ),
         ),
       ),
     );

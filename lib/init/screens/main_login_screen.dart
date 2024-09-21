@@ -99,7 +99,7 @@ class _MainLoginScreenState extends State<MainLoginScreen>
                 children: [
                   const ImagePositions(
                     imagePath: '${ImageAssets.backgroundImagePath}t_five.png',
-                    opacity: 0.05,
+                    opacity: 0.07,
                   ),
                   Positioned.fill(
                     child: Padding(
