@@ -1,6 +1,6 @@
 class AppTexts {
   static const appName = 'يو كورس';
-  static const welcome = "مرحباً sdfsdfsdfبكم في يو كورس";
+  static const welcome = "مرحباً بكم في يو كورس";
   static const welcomeDesc = '''نقدم لك مجموعة متنوعة من الدورات التعليمية
        المصممة خصيصًا لطلاب الجامعات
        لمساعدتكم على تعزيز مهاراتكم الأكاديمية والمهنية. 
