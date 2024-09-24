@@ -58,57 +58,59 @@ class _CourseCardState extends State<CourseCard> {
             ),
             child: Card(
               elevation: 15,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Hero(
-                    tag: widget.course.id,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Hero(
+                      tag: widget.course.id,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                        ),
+                        child: CachedNetworkImage(
+                          height: imageHeight,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          imageUrl: widget.course.images,
+                          placeholder: (context, url) => const LottieLoading(),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.error,
+                            size: 50,
+                            color: Colors.red,
+                          ),
                         ),
                       ),
-                      child: CachedNetworkImage(
-                        height: imageHeight,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        imageUrl: widget.course.images,
-                        placeholder: (context, url) => const LottieLoading(),
-                        errorWidget: (context, url, error) => const Icon(
-                          Icons.error,
-                          size: 50,
-                          color: Colors.red,
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        widget.course.title,
+                        style: Styles.style18.copyWith(fontSize: fontSize),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      widget.course.title,
-                      style: Styles.style18.copyWith(fontSize: fontSize),
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
+                      child: Text(
+                        widget.course.description,
+                        style: Styles.style13grey
+                            .copyWith(fontSize: fontSize * 0.9),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    child: Text(
-                      widget.course.description,
-                      style:
-                          Styles.style13grey.copyWith(fontSize: fontSize * 0.9),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildActionButtons(context),
-                  _buildRatingInfo(context, screenWidth),
-                  _buildDateInfo(),
-                ],
+                    const SizedBox(height: 10),
+                    _buildActionButtons(context),
+                    _buildRatingInfo(context, screenWidth),
+                    _buildDateInfo(),
+                  ],
+                ),
               ),
             ),
           ),
