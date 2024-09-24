@@ -57,7 +57,7 @@ class _CourseGridState extends State<CourseGrid>
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount = screenWidth > 1200
-        ? 6
+        ? 4
         : screenWidth > 800
             ? 4
             : screenWidth > 600
@@ -69,13 +69,17 @@ class _CourseGridState extends State<CourseGrid>
     }
 
     return Padding(
-      padding: const EdgeInsets.only(top: 80, left: 20, right: 20, bottom: 20),
+      padding: const EdgeInsets.only(
+        top: 80,
+        left: 20,
+        right: 20,
+      ),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           childAspectRatio: screenWidth > 600 ? 14 / 16 : 16,
           crossAxisSpacing: 15,
-          mainAxisSpacing: 90,
+          mainAxisSpacing: 14,
         ),
         itemCount: widget.courses.length,
         itemBuilder: (context, index) {
