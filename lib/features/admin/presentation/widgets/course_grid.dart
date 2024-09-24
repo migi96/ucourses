@@ -73,7 +73,7 @@ class _CourseGridState extends State<CourseGrid>
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
-          childAspectRatio: screenWidth > 600 ? 11 / 13 : 13,
+          childAspectRatio: screenWidth > 600 ? 14 / 16 : 16,
           crossAxisSpacing: 15,
           mainAxisSpacing: 90,
         ),
