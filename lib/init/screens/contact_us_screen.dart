@@ -5,6 +5,8 @@ import 'package:ucourses/core/shared/widgets/decorators/gradient_container_widge
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/constants_exports.dart';
 import '../../core/shared/widgets/decorators/image_positions_widget.dart'; // Import ImagePositions widget
+import '../../features/admin/presentation/screens/admin_profile_screen.dart';
+import '../../features/admin/presentation/screens/admin_student_list_screen.dart';
 import '../widgets/widget_exports.dart';
 
 class ContactUsScreen extends StatefulWidget {
@@ -64,7 +66,32 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 ),
                 Column(
                   children: [
-                    const HomeNavigation(),
+                    HomeNavigation(navItems: [
+                      NavigationItem(
+                        title: AppTexts.home,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/home');
+                        },
+                      ),
+                      NavigationItem(
+                        title: AppTexts.login,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                      ),
+                      NavigationItem(
+                        title: AppTexts.about,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/about_us');
+                        },
+                      ),
+                      NavigationItem(
+                        title: AppTexts.contactUs,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/contact_us');
+                        },
+                      ),
+                    ]),
                     Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: MediaQuery.of(context).size.height * 0.08,

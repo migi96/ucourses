@@ -1,109 +1,260 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../quiz/domain/entities/quiz.dart';
 import '../../../quiz/domain/repositories/quiz_repo.dart';
+import '../../../student/data/models/course_model.dart';
 import '../../../student/domain/entities/course_entity.dart';
 import '../../../student/domain/usecases/course_use_cases.dart';
 import '../../domain/usecases/admin_use_cases.dart';
 import 'admin_state.dart';
 
 class AdminCubit extends Cubit<AdminState> {
-  final AdminUseCases adminUseCases;
-  final QuizRepository quizRepository;
-  final CourseUseCases courseUseCases;
+  List<Course> allCourses = []; // List to store all courses
+
+  final AdminUseCases adminUseCases; // Use cases for admin operations
+  final QuizRepository quizRepository; // Repository for quiz operations
+  final CourseUseCases courseUseCases; // Use cases for course operations
 
   AdminCubit(this.adminUseCases, this.quizRepository, this.courseUseCases)
       : super(AdminLoading());
 
+  // Fetch the list of courses
   Future<void> getCourses() async {
     try {
-      var courses = await adminUseCases.getCourses();
-      emit(AdminCoursesLoaded(courses));
+      print("Fetching all courses from Firebase...");
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('courses')
+          .where('isArchived', isEqualTo: false) // Filter non-archived courses
+          .get();
+
+      allCourses = querySnapshot.docs
+          .map((doc) => CourseModel.fromFirestore(doc.data(), doc.id))
+          .toList();
+
+      print("Fetched ${allCourses.length} courses from Firebase.");
+      emit(AdminCoursesLoaded(allCourses));
     } catch (e) {
-      emit(AdminError(e.toString()));
+      print("Error while fetching courses: $e");
+      emit(AdminError('Failed to fetch courses: $e'));
     }
   }
 
+  // Add a new course and refresh the list
   void addCourse(Course course) async {
     try {
+      print("Adding a new course: ${course.title}");
       await adminUseCases.addCourse(course);
-      getCourses();
+      print("Course added successfully.");
+      getCourses(); // Fetch updated list after adding the course
     } catch (e) {
+      print("Error while adding course: $e");
       emit(AdminError('Error while adding course: $e'));
     }
   }
 
-  void addQuiz(String courseId, Quiz quiz) async {
+  // Edit an existing course
+  Future<void> editCourse(Course course) async {
+    emit(AdminLoading()); // Emit loading state
     try {
-      await quizRepository.addQuiz(courseId, quiz);
-      emit(AdminOperationSuccess('Quiz added successfully'));
-      fetchQuizzes(courseId); // Refresh quiz list after adding
+      print("Editing course: ${course.title}");
+      await adminUseCases.editCourse(course.id, course);
+      print("Course edited successfully.");
+      getCourses(); // Refresh the list after editing
     } catch (e) {
-      emit(AdminError(e.toString()));
+      print("Error while editing course: $e");
+      emit(AdminError(
+          "Failed to edit course: $e")); // Emit error if editing fails
     }
   }
 
+  // Delete a course (archive it)
+  Future<void> deleteCourse(String courseId) async {
+    try {
+      print("Attempting to archive course with ID: $courseId");
+      Course courseToDelete =
+          allCourses.firstWhere((course) => course.id == courseId);
+      print("Found course to delete: ${courseToDelete.title}");
+
+      // Mark course as archived
+      Course updatedCourse = courseToDelete.copyWith(isArchived: true);
+      await adminUseCases.editCourse(updatedCourse.id, updatedCourse);
+
+      // Log the success
+      print("Course archived successfully: ${updatedCourse.isArchived}");
+
+      // Fetch the updated list
+      getCourses();
+    } catch (e) {
+      print("Error while archiving course: $e");
+      emit(AdminError("Failed to archive course: $e"));
+    }
+  }
+
+  // Fetch quizzes for a specific course
+  Future<void> fetchQuizzes(String courseId) async {
+    try {
+      print("Fetching quizzes for course ID: $courseId");
+      var quizzes = await quizRepository.getQuizzes(courseId);
+      print("Fetched ${quizzes.length} quizzes for course ID: $courseId");
+      emit(QuizzesLoaded(quizzes)); // Emit the state with loaded quizzes
+    } catch (e) {
+      print("Error while fetching quizzes: $e");
+      emit(AdminError(
+          "Failed to fetch quizzes: $e")); // Emit error if fetching fails
+    }
+  }
+
+  // Add a quiz to a course
+  void addQuiz(String courseId, Quiz quiz) async {
+    try {
+      print("Adding quiz to course ID: $courseId");
+      await quizRepository.addQuiz(courseId, quiz);
+      print("Quiz added successfully.");
+      emit(AdminOperationSuccess(
+          'Quiz added successfully')); // Notify of success
+      fetchQuizzes(courseId); // Refresh the quiz list
+    } catch (e) {
+      print("Error while adding quiz: $e");
+      emit(AdminError("Failed to add quiz: $e")); // Emit error if adding fails
+    }
+  }
+
+  // Edit an existing quiz
   Future<void> editQuiz(
       String courseId, String quizId, Quiz updatedQuiz) async {
     try {
+      print("Editing quiz ID: $quizId for course ID: $courseId");
       await quizRepository.updateQuiz(courseId, quizId, updatedQuiz);
-      emit(AdminOperationSuccess('Quiz updated successfully'));
-      fetchQuizzes(courseId); // Refresh quiz list after updating
+      print("Quiz edited successfully.");
+      emit(AdminOperationSuccess(
+          'Quiz updated successfully')); // Notify of success
+      fetchQuizzes(courseId); // Refresh the quiz list
     } catch (e) {
-      emit(AdminError("Failed to update quiz: $e"));
+      print("Error while editing quiz: $e");
+      emit(AdminError(
+          "Failed to update quiz: $e")); // Emit error if editing fails
     }
   }
 
+  // Delete a quiz from a course
   Future<void> deleteQuiz(String courseId, String quizId) async {
     try {
+      print("Deleting quiz ID: $quizId from course ID: $courseId");
       await quizRepository.deleteQuiz(courseId, quizId);
-      emit(AdminOperationSuccess('Quiz deleted successfully'));
-      fetchQuizzes(courseId); // Refresh quiz list after deletion
+      print("Quiz deleted successfully.");
+      emit(AdminOperationSuccess(
+          'Quiz deleted successfully')); // Notify of success
+      fetchQuizzes(courseId); // Refresh the quiz list
     } catch (e) {
-      emit(AdminError("Failed to delete quiz: $e"));
+      print("Error while deleting quiz: $e");
+      emit(AdminError(
+          "Failed to delete quiz: $e")); // Emit error if deleting fails
     }
   }
 
-  Future<void> fetchQuizzes(String courseId) async {
+  // Fetch archived (deleted) courses
+  Future<void> getDeletedCourses() async {
     try {
-      var quizzes = await quizRepository.getQuizzes(courseId);
-      emit(QuizzesLoaded(quizzes));
+      print("Fetching archived courses from Firebase...");
+
+      // Query Firebase for courses where 'isArchived' is true
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('courses')
+          .where('isArchived', isEqualTo: true)
+          .get();
+
+      var archivedCourses = querySnapshot.docs
+          .map((doc) => CourseModel.fromFirestore(doc.data(), doc.id))
+          .toList();
+
+      print("Archived courses count: ${archivedCourses.length}");
+      for (var course in archivedCourses) {
+        print("Archived course title: ${course.title}, ID: ${course.id}");
+      }
+
+      emit(AdminCoursesLoaded(archivedCourses)); // Load archived courses
     } catch (e) {
-      emit(AdminError("Failed to fetch quizzes: $e"));
+      print("Error while fetching archived courses: $e");
+      emit(AdminError('Failed to fetch deleted courses: $e'));
     }
   }
 
-  Future<void> editCourse(Course course) async {
-    emit(AdminLoading());
-    try {
-      await adminUseCases.editCourse(course.id, course);
-      getCourses(); // Refresh the list
-    } catch (e) {
-      emit(AdminError("Failed to edit course: $e"));
-    }
-  }
-
-  Future<void> deleteCourse(String courseId) async {
-    if (courseId.isEmpty) {
-      print("Invalid course ID: $courseId");
-      return; // Exit if courseId is invalid to prevent errors
-    }
-
-    try {
-      await adminUseCases.deleteCourse(courseId);
-      getCourses(); // Refresh the list after deletion
-    } catch (e) {
-      emit(AdminError("Failed to delete course: $e"));
-    }
-  }
-
+  // Filter courses by a keyword
   void filterCourses(String keyword) {
     if (state is AdminCoursesLoaded) {
       final filteredCourses = (state as AdminCoursesLoaded)
           .courses
           .where((c) => c.title.toLowerCase().contains(keyword.toLowerCase()))
           .toList();
-      emit(AdminCoursesLoaded(filteredCourses));
+
+      print(
+          "Filtered courses count: ${filteredCourses.length} for keyword: $keyword");
+      emit(AdminCoursesLoaded(filteredCourses)); // Emit filtered list
     }
   }
 
+  // Sort courses based on filter
+  void sortCourses(String filter) {
+    List<Course> sortedCourses = allCourses; // Default to the full list
+
+    if (filter == "recency") {
+      // Sort by recency
+      print("Sorting courses by recency...");
+      sortedCourses = allCourses..sort((a, b) => b.date.compareTo(a.date));
+    } else if (filter == "alphabetical") {
+      // Sort alphabetically
+      print("Sorting courses alphabetically...");
+      sortedCourses = allCourses..sort((a, b) => a.title.compareTo(b.title));
+    }
+
+    print("Sorted courses count: ${sortedCourses.length}");
+    emit(AdminCoursesLoaded(sortedCourses)); // Emit sorted list
+  }
+
+  // Fetch draft courses
+  Future<void> getDraftCourses() async {
+    try {
+      print("Fetching draft courses...");
+      var draftCourses =
+          allCourses.where((course) => course.status == "draft").toList();
+
+      print("Fetched ${draftCourses.length} draft courses.");
+      emit(AdminCoursesLoaded(draftCourses));
+    } catch (e) {
+      print("Error while fetching draft courses: $e");
+      emit(AdminError('Failed to fetch draft courses: $e'));
+    }
+  }
+
+  // Restore a course from deleted to all courses
+  Future<void> restoreCourse(String courseId) async {
+    try {
+      print("Restoring course with ID: $courseId");
+      Course courseToRestore =
+          allCourses.firstWhere((course) => course.id == courseId);
+
+      // Set isArchived to false
+      Course updatedCourse = courseToRestore.copyWith(isArchived: false);
+      await adminUseCases.editCourse(updatedCourse.id, updatedCourse);
+
+      print("Course restored successfully.");
+      getDeletedCourses(); // Refresh the deleted courses list
+    } catch (e) {
+      print("Error while restoring course: $e");
+      emit(AdminError("Failed to restore course: $e"));
+    }
+  }
+
+  // Permanently delete a course
+  Future<void> deleteCoursePermanently(String courseId) async {
+    try {
+      print("Permanently deleting course with ID: $courseId");
+      await adminUseCases.deleteCourse(courseId);
+      print("Course deleted permanently.");
+      getDeletedCourses(); // Refresh the deleted courses list
+    } catch (e) {
+      print("Error while deleting course permanently: $e");
+      emit(AdminError("Failed to delete course permanently: $e"));
+    }
+  }
 }

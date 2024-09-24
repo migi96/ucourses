@@ -4,6 +4,8 @@ import 'package:ucourses/init/screens/footer_screen.dart';
 import 'package:ucourses/init/widgets/logo_shadow.dart';
 
 import '../../core/constants/constants_exports.dart';
+import '../../features/admin/presentation/screens/admin_profile_screen.dart';
+import '../../features/admin/presentation/screens/admin_student_list_screen.dart';
 import '../widgets/widget_exports.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -95,7 +97,32 @@ class _AboutScreenState extends State<AboutScreen>
         myChild: SingleChildScrollView(
           child: Column(
             children: [
-              const HomeNavigation(),
+              HomeNavigation(navItems: [
+                NavigationItem(
+                  title: AppTexts.home,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/home');
+                  },
+                ),
+                NavigationItem(
+                  title: AppTexts.login,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+                NavigationItem(
+                  title: AppTexts.about,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/about_us');
+                  },
+                ),
+                NavigationItem(
+                  title: AppTexts.contactUs,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/contact_us');
+                  },
+                ),
+              ]),
               const SizedBox(height: 30),
               Container(
                 width: MediaQuery.of(context).size.width,

@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/constants/constants_exports.dart';
-import '../home_screen.dart';
-import '../screens/about_screen.dart';
-import '../screens/contact_us_screen.dart';
-import '../screens/main_login_screen.dart';
 
 class HomeNavigation extends StatefulWidget {
-  const HomeNavigation({super.key});
+  final List<NavigationItem> navItems; // List of dynamic items
+  const HomeNavigation({super.key, required this.navItems});
 
   @override
   _HomeNavigationState createState() => _HomeNavigationState();
 }
 
 class _HomeNavigationState extends State<HomeNavigation> {
-  // Track hover state for each button
-  bool isHomeHovered = false;
-  bool isLoginHovered = false;
-  bool isAboutHovered = false;
-  bool isContactUsHovered = false;
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -59,117 +50,44 @@ class _HomeNavigationState extends State<HomeNavigation> {
             ],
           ),
 
-          // Navigation buttons with animated underline and vertical lines
+          // Dynamic Navigation buttons
           Expanded(
             child: screenWidth > 600
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      buildTextButton(
-                        context: context,
-                        text: AppTexts.home,
-                        isHovered: isHomeHovered,
-                        onHover: (hovered) {
-                          setState(() {
-                            isHomeHovered = hovered;
-                          });
-                        },
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const HomeScreen()));
-                        },
-                      ),
-                      buildVerticalLine(
-                          screenWidth), // Responsive vertical line
-                      buildTextButton(
-                        context: context,
-                        text: AppTexts.login,
-                        isHovered: isLoginHovered,
-                        onHover: (hovered) {
-                          setState(() {
-                            isLoginHovered = hovered;
-                          });
-                        },
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const MainLoginScreen()));
-                        },
-                      ),
-                      buildVerticalLine(
-                          screenWidth), // Responsive vertical line
-                      buildTextButton(
-                        context: context,
-                        text: AppTexts.about,
-                        isHovered: isAboutHovered,
-                        onHover: (hovered) {
-                          setState(() {
-                            isAboutHovered = hovered;
-                          });
-                        },
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const AboutScreen()));
-                        },
-                      ),
-                      buildVerticalLine(
-                          screenWidth), // Responsive vertical line
-                      buildTextButton(
-                        context: context,
-                        text: AppTexts.contactUs,
-                        isHovered: isContactUsHovered,
-                        onHover: (hovered) {
-                          setState(() {
-                            isContactUsHovered = hovered;
-                          });
-                        },
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ContactUsScreen()));
-                        },
-                      ),
-                    ],
+                    children: widget.navItems.map((item) {
+                      return Row(
+                        children: [
+                          buildTextButton(
+                            context: context,
+                            text: item.title,
+                            isHovered: item.isHovered,
+                            onHover: (hovered) {
+                              setState(() {
+                                item.isHovered = hovered;
+                              });
+                            },
+                            onPressed: item.onPressed,
+                          ),
+                          buildVerticalLine(screenWidth),
+                        ],
+                      );
+                    }).toList(),
                   )
                 : PopupMenuButton<String>(
                     icon: const Icon(Icons.menu, color: Colors.white),
                     onSelected: (value) {
-                      switch (value) {
-                        case AppTexts.home:
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const HomeScreen()));
-                          break;
-                        case AppTexts.login:
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const MainLoginScreen()));
-                          break;
-                        case AppTexts.about:
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const AboutScreen()));
-                          break;
-                        case AppTexts.contactUs:
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ContactUsScreen()));
-                          break;
-                      }
+                      widget.navItems
+                          .firstWhere((item) => item.title == value)
+                          .onPressed();
                     },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: AppTexts.home,
-                        child: Text(AppTexts.home),
-                      ),
-                      const PopupMenuItem(
-                        value: AppTexts.login,
-                        child: Text(AppTexts.login),
-                      ),
-                      const PopupMenuItem(
-                        value: AppTexts.about,
-                        child: Text(AppTexts.about),
-                      ),
-                      const PopupMenuItem(
-                        value: AppTexts.contactUs,
-                        child: Text(AppTexts.contactUs),
-                      ),
-                    ],
+                    itemBuilder: (context) => widget.navItems
+                        .map((item) => PopupMenuItem(
+                              value: item.title,
+                              child: Text(item.title),
+                            ))
+                        .toList(),
                   ),
           ),
         ],
@@ -206,8 +124,8 @@ class _HomeNavigationState extends State<HomeNavigation> {
             child: TextButton(
               onPressed: onPressed,
               child: Text(
-                overflow: TextOverflow.ellipsis,
                 text,
+                overflow: TextOverflow.ellipsis,
                 style: Styles.style24.copyWith(
                   fontSize: 20, // Adjust font size for responsiveness
                   color: Colors.white,
@@ -225,4 +143,16 @@ class _HomeNavigationState extends State<HomeNavigation> {
       ),
     );
   }
+}
+
+class NavigationItem {
+  final String title;
+  bool isHovered;
+  final VoidCallback onPressed;
+
+  NavigationItem({
+    required this.title,
+    required this.onPressed,
+    this.isHovered = false,
+  });
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/constants/constants_exports.dart';
 import '../../core/shared/widgets/decorators/image_positions_widget.dart';
+import '../../features/admin/presentation/screens/admin_profile_screen.dart';
+import '../../features/admin/presentation/screens/admin_student_list_screen.dart';
 import '../widgets/widget_exports.dart';
 
 class MainHeaderScreen extends StatefulWidget {
@@ -73,7 +75,34 @@ class _MainHeaderScreenState extends State<MainHeaderScreen>
               Container(
                 height: 80,
                 color: Colors.white.withOpacity(0.1),
-                child: const HomeNavigation(),
+                child: HomeNavigation(
+                  navItems: [
+                    NavigationItem(
+                      title: AppTexts.home,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/home');
+                      },
+                    ),
+                    NavigationItem(
+                      title: AppTexts.login,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                    ),
+                    NavigationItem(
+                      title: AppTexts.about,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/about_us');
+                      },
+                    ),
+                    NavigationItem(
+                      title: AppTexts.contactUs,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/contact_us');
+                      },
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.05),
               Container(

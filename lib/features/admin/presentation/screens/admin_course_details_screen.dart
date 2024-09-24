@@ -1,11 +1,7 @@
-
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart'; // To check for web platform
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ucourses/core/constants/app_text.dart';
-import 'package:ucourses/core/constants/app_text_styles.dart';
-import 'package:ucourses/core/shared/widgets/style/custom_appbar.dart';
-import 'package:ucourses/core/shared/widgets/style/lottie_loading.dart';
 import '../../../student/domain/entities/course_entity.dart';
 import '../cubit/admin_cubit.dart';
 import '../cubit/admin_state.dart';
@@ -24,8 +20,8 @@ class AdminCourseDetailsScreen extends StatelessWidget {
     BlocProvider.of<AdminCubit>(context).fetchQuizzes(course.id);
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: course.title,
+      appBar: AppBar(
+        title: Text(course.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -46,33 +42,22 @@ class AdminCourseDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(15)),
-                child: Card(
-                  elevation: 9,
-                  child: CachedNetworkImage(
-                    imageUrl: course.images,
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const LottieLoading(),
-                    errorWidget: (context, url, error) => Image.asset(
-                      'lib/assets/images/icons/placeholder.png',
-                      height: 200,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
+              if (kIsWeb &&
+                  course.introVideo != null &&
+                  course.introVideo!.isNotEmpty)
+                SizedBox(
+                  height: 300,
+                  child: HtmlVideoPlayer(videoUrl: course.introVideo!),
+                )
+              else
+                const Text(
+                    "No video available or not supported on this platform"),
               const SizedBox(height: 30),
               CourseDetailsContent(course: course),
               const Divider(),
               const SizedBox(height: 10),
-              const Text(
-                AppTexts.quizQestions,
-                style: Styles.style15grey,
-              ),
+              const Text("Quiz Questions",
+                  style: TextStyle(color: Colors.grey)),
               BlocBuilder<AdminCubit, AdminState>(
                 builder: (context, state) {
                   if (state is QuizzesLoaded) {
@@ -89,6 +74,24 @@ class AdminCourseDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class HtmlVideoPlayer extends StatelessWidget {
+  final String videoUrl;
+
+  const HtmlVideoPlayer({required this.videoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    html.VideoElement videoElement = html.VideoElement()
+      ..src = videoUrl
+      ..controls = true
+      ..autoplay = false;
+
+    return HtmlElementView(
+      viewType: 'videoElement-${videoUrl.hashCode}', // Unique ID
     );
   }
 }

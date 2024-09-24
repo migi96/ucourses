@@ -158,7 +158,9 @@ class _AdminLoginFormState extends State<AdminLoginForm>
     return Row(
       children: [
         Checkbox(
-          checkColor: Colors.white,
+          side: WidgetStateBorderSide.resolveWith(
+            (states) => const BorderSide(width: 1.0, color: Colors.white),
+          ),
           fillColor:
               WidgetStateProperty.all(AppColors.thirdColor.withOpacity(0.5)),
           value: _rememberMe,
@@ -181,7 +183,7 @@ class _AdminLoginFormState extends State<AdminLoginForm>
       child: AnimatedScale(
         scale: _isHoveredButton ? 1.1 : 1.0,
         duration: const Duration(milliseconds: 300),
-        child: ElevatedButton.icon(
+        child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             shadowColor: Colors.black,
@@ -205,8 +207,7 @@ class _AdminLoginFormState extends State<AdminLoginForm>
                   );
             }
           },
-          icon: const Icon(Icons.login, color: AppColors.thirdColor),
-          label: Text(
+          child: Text(
             AppTexts.login,
             style: Styles.style20White.copyWith(color: Colors.black),
           ),

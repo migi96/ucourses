@@ -18,39 +18,44 @@ class LogoShadow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize:
+            MainAxisSize.min, // Ensures the column takes minimum space
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              maxRadius: 40,
+              child: Image.asset(
+                logoImage,
+                height: height,
+                width: width,
               ),
-            ],
-          ),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            maxRadius: 40,
-            child: Image.asset(
-              logoImage,
-              height: height,
-              width: width,
             ),
           ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Text(
-          companyName,
-          style: Styles.style15grey,
-          textAlign: TextAlign.center,
-        ),
-      ],
+          const SizedBox(
+            height: 20, // Reduced space between the logo and the text
+          ),
+          Text(
+            companyName,
+            style: Styles.style15grey.copyWith(fontSize: 12),
+            textAlign: TextAlign.center,
+            softWrap: true, // Ensures the text wraps if it's too long
+          ),
+        ],
+      ),
     );
   }
 }

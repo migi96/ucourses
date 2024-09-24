@@ -9,6 +9,7 @@ class CustomInputField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final TextEditingController? controller;
   final VoidCallback? onClearButtonPressed;
+  final TextInputType? numericKeyboardType;
   final ValueChanged<String>? onChanged;
   final String labelText;
   final bool obscureText;
@@ -23,6 +24,7 @@ class CustomInputField extends StatelessWidget {
     this.onChanged,
     required this.labelText,
     this.obscureText = false,
+    this.numericKeyboardType,
   });
 
   @override
@@ -30,6 +32,7 @@ class CustomInputField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       validator: validator,
+      keyboardType: numericKeyboardType ?? TextInputType.text,
       obscureText: obscureText,
       onChanged: onChanged,
       decoration: InputDecoration(

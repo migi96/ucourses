@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ucourses/core/constants/constants_exports.dart';
 import 'package:ucourses/core/shared/widgets/decorators/gradient_container_widget.dart';
 import '../../core/shared/widgets/decorators/image_positions_widget.dart';
+import '../../features/admin/presentation/screens/admin_profile_screen.dart';
+import '../../features/admin/presentation/screens/admin_student_list_screen.dart';
 import '../widgets/admin_login_form.dart';
 import '../widgets/centered_buttons.dart';
 import '../widgets/student_login_form.dart';
@@ -94,7 +96,32 @@ class _MainLoginScreenState extends State<MainLoginScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const HomeNavigation(),
+              HomeNavigation(navItems: [
+                NavigationItem(
+                  title: AppTexts.home,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/home');
+                  },
+                ),
+                NavigationItem(
+                  title: AppTexts.login,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+                NavigationItem(
+                  title: AppTexts.about,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/about_us');
+                  },
+                ),
+                NavigationItem(
+                  title: AppTexts.contactUs,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/contact_us');
+                  },
+                ),
+              ]),
               Stack(
                 children: [
                   const ImagePositions(

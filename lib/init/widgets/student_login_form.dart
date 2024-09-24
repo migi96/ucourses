@@ -92,7 +92,7 @@ class _StudentLoginFormState extends State<StudentLoginForm>
                       const SizedBox(height: 16),
                       _buildPasswordField(),
                       const SizedBox(height: 16),
-                      _buildRememberMeCheckbox(),
+                      _buildRememberMeCheckboxAndRegisterTextButton(),
                       _buildLoginButton(),
                     ],
                   ),
@@ -152,7 +152,7 @@ class _StudentLoginFormState extends State<StudentLoginForm>
     );
   }
 
-  Widget _buildRememberMeCheckbox() {
+  Widget _buildRememberMeCheckboxAndRegisterTextButton() {
     return Row(
       children: [
         Checkbox(
@@ -168,6 +168,20 @@ class _StudentLoginFormState extends State<StudentLoginForm>
           },
         ),
         Text(AppTexts.rememberUser, style: Styles.style16White),
+        Flexible(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/register');
+              },
+              child: Text(
+                '${AppTexts.noAccountRegister}?',
+                style: Styles.style16White,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -179,7 +193,7 @@ class _StudentLoginFormState extends State<StudentLoginForm>
       child: AnimatedScale(
         scale: _isHoveredButton ? 1.1 : 1.0,
         duration: const Duration(milliseconds: 300),
-        child: ElevatedButton.icon(
+        child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             shadowColor: Colors.black,
@@ -203,8 +217,7 @@ class _StudentLoginFormState extends State<StudentLoginForm>
                   );
             }
           },
-          icon: const Icon(Icons.login, color: AppColors.thirdColor),
-          label: Text(
+          child: Text(
             AppTexts.login,
             style: Styles.style20White.copyWith(color: Colors.black),
           ),

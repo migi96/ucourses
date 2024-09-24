@@ -31,7 +31,7 @@ class AppTexts {
   static const rememberUser = "تذكرني";
   static const studentlist = "قائمة الطلاب";
   static const student = "طالب";
-  // static const admin = 'مدير';
+  static const studentsList = "قائمة الطلاب";
   static const viewCertificate = "عرض الشهادة";
   static const yourCertificate = "شهادة الطالب";
   static const yourScore = "النتيجة";
@@ -251,18 +251,23 @@ class AppTexts {
   static const courseContent = 'محتوى الدورة:';
   static const courseImage = 'صورة الدورة:';
   static const courseRating = 'تقييم الدورة:';
+  static const rating = 'تقييم';
   static const noCoursesAvaliable = 'لا يوجد دورات متاحة';
 
   static const editCourse = 'تعديل الدورة';
   static const addCourse = 'اضافة دورة';
   static const add = 'اضافة';
+  static const addQuestions = 'اضافة الاسئلة';
   static const save = 'حفظ';
   static const noAdminData = 'لا يوجد بيانات للمشرف';
   static const confirm = 'تأكيد';
   static const courseDeletionConfirmation = 'هل تريد حذف هذه الدورة؟';
 
   static const delete = 'حذف';
+  static const deleteCourse = 'حذف الدورة';
   static const editProfile = 'تعديل الملف الشخصي';
+  static const newerCourse = 'الدورة القديمة';
+  static const alphabetical = 'الترتيب الأبجدي';
 
   // Validator messages
   static const requestPhoneNumber = "الرجاء إدخال رقم الجوال";

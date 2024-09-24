@@ -92,7 +92,7 @@ class CompletedCoursesScreen extends StatelessWidget {
                                     .student
                                     .username;
                                 double score = state.completedCourses[index]
-                                    .score; // Ensure score is correctly used from the course
+                                    .score!!; // Ensure score is correctly used from the course
                                 print(
                                     "Downloading PDF for ${state.completedCourses[index].title} with score: $score"); // Debug print to check the score being used
 

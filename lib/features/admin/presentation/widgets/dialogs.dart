@@ -51,26 +51,30 @@ class Dialogs {
             ),
             actions: <Widget>[
               ElevatedButton.icon(
-                  onPressed: () {
-                    final newCourse = Course(
-                      id: course?.id ?? '',
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      content: contentController.text,
-                      images: imageController.text,
-                      rating: course?.rating ?? 0.0,
-                    );
-                    if (course == null) {
-                      BlocProvider.of<AdminCubit>(context).addCourse(newCourse);
-                    } else {
-                      BlocProvider.of<AdminCubit>(context)
-                          .editCourse(newCourse);
-                    }
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.save, color: Colors.green),
-                  label: Text(course == null ? AppTexts.add : AppTexts.save,
-                      style: Styles.style16)),
+                onPressed: () {
+                  final newCourse = Course(
+                    id: course?.id ?? '',
+                    title: titleController.text,
+                    description: descriptionController.text,
+                    content: contentController.text,
+                    images: imageController.text,
+                    rating: course?.rating ?? 0.0,
+                    isArchived: course?.isArchived ?? false, // Add this
+                    date: course?.date ?? DateTime.now(), // Add this
+                    status: course?.status ?? 'draft', // Add this
+                  );
+
+                  if (course == null) {
+                    BlocProvider.of<AdminCubit>(context).addCourse(newCourse);
+                  } else {
+                    BlocProvider.of<AdminCubit>(context).editCourse(newCourse);
+                  }
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.save, color: Colors.green),
+                label: Text(course == null ? AppTexts.add : AppTexts.save,
+                    style: Styles.style16),
+              ),
               ElevatedButton.icon(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(
@@ -117,4 +121,3 @@ class Dialogs {
     );
   }
 }
-
