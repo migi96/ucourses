@@ -1,16 +1,13 @@
 
 #!/bin/bash
 
-# Install Flutter SDK
-git clone https://github.com/flutter/flutter.git -b stable --depth 1
+# Check if Flutter SDK is already cached
+if [ ! -d "flutter" ]; then
+  echo "Cloning Flutter SDK..."
+  git clone https://github.com/flutter/flutter.git -b stable --depth 1
+fi
 
 export PATH="$PATH:`pwd`/flutter/bin"
-
-# Accept Android licenses (if needed)
-flutter doctor --android-licenses
-
-# Run Flutter doctor
-flutter doctor
 
 # Enable web support
 flutter config --enable-web
@@ -20,3 +17,4 @@ flutter pub get
 
 # Build the Flutter web app
 flutter build web --release
+
