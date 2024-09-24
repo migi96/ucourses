@@ -1,6 +1,15 @@
 [build]
   publish = "build/web"
   command = "bash build.sh"
+  functions = ""
+  environment = { 
+    PATH = "$PATH:/opt/build/repo/flutter/bin",
+    FLUTTER_HOME = "/opt/build/repo/flutter"
+  }
+
+[build.lifecycle]
+  ignore = "echo 'Skipping ignore step'"
+  install = "echo 'Skipping install step'"
 
 [build.environment]
   PATH = "$PATH:/opt/build/repo/flutter/bin"
