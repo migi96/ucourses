@@ -71,37 +71,41 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
         title: AppTexts.profile,
         actions: customAppBarActions(context),
       ),
-      body: BlocBuilder<AdminProfileCubit, Admin?>(
-        builder: (context, admin) {
-          if (admin == null) {
-            return const Center(
-                child:
-                    SizedBox(height: 120, width: 120, child: LottieLoading()));
-          }
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: ListView(
-              padding: const EdgeInsets.only(left: 50, right: 50, top: 30),
-              children: <Widget>[
-                _buildAnimatedAvatar(),
-                const SizedBox(height: 50),
-                _buildAnimatedCard(
-                  icon: Icons.person,
-                  title: AppTexts.userName,
-                  subtitle: admin.name,
+      body: Column(
+        children: [
+          BlocBuilder<AdminProfileCubit, Admin?>(
+            builder: (context, admin) {
+              if (admin == null) {
+                return const Center(
+                    child: SizedBox(
+                        height: 120, width: 120, child: LottieLoading()));
+              }
+              return Directionality(
+                textDirection: TextDirection.rtl,
+                child: ListView(
+                  padding: const EdgeInsets.only(left: 50, right: 50, top: 30),
+                  children: <Widget>[
+                    _buildAnimatedAvatar(),
+                    const SizedBox(height: 50),
+                    _buildAnimatedCard(
+                      icon: Icons.person,
+                      title: AppTexts.userName,
+                      subtitle: admin.name,
+                    ),
+                    const SizedBox(height: 15),
+                    _buildAnimatedCard(
+                      icon: Icons.email,
+                      title: AppTexts.email,
+                      subtitle: admin.email,
+                    ),
+                    const SizedBox(height: 30),
+                    _buildAnimatedButton(context, admin),
+                  ],
                 ),
-                const SizedBox(height: 15),
-                _buildAnimatedCard(
-                  icon: Icons.email,
-                  title: AppTexts.email,
-                  subtitle: admin.email,
-                ),
-                const SizedBox(height: 30),
-                _buildAnimatedButton(context, admin),
-              ],
-            ),
-          );
-        },
+              );
+            },
+          ),
+        ],
       ),
     );
   }
