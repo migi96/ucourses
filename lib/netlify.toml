@@ -1,0 +1,17 @@
+[build]
+  publish = "build/web"
+  command = "bash build.sh"
+
+[build.environment]
+  PATH = "$PATH:/opt/build/repo/flutter/bin"
+  FLUTTER_HOME = "/opt/build/repo/flutter"
+
+[build]
+  base = "/"
+
+[context.production.environment]
+  NODE_VERSION = "16"
+
+[context.production]
+  environment = { NODE_VERSION = "16" }
+
