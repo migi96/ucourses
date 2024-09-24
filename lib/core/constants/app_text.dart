@@ -21,7 +21,11 @@ class AppTexts {
   static const passwordvalidationError =
       "كلمة المرور يجب ان تتكون من 8 حروف على الاقل";
   static const myCourses = "الدورات";
+  static const noCoursesAvailable = "لا يوجد دورات متاحة";
   static const courses = "الدورات";
+  static const allCourses = "الكل";
+  static const newerCourses = "الدورات المسودة";
+  static const deletedCourses = "الدورات المحذوفة";
   static const services = "الخدمات";
   static const testimonials = "الشهادات";
   static const start = "أبدآ";

@@ -1,13 +1,12 @@
+import 'package:intl/intl.dart' as intl;
 import 'package:custom_rating_bar/custom_rating_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ucourses/core/shared/widgets/style/lottie_loading.dart';
 import 'package:ucourses/features/admin/presentation/screens/admin_course_details_screen.dart';
+import 'package:ucourses/features/admin/presentation/widgets/dialogs.dart';
 import 'package:ucourses/features/student/domain/entities/course_entity.dart';
-import 'package:intl/intl.dart' as intl;
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/constants_exports.dart';
-import '../cubit/admin_cubit.dart';
 import '../functions/course_dialogs.dart';
 import '../functions/quiz_actions.dart';
 
@@ -58,59 +57,57 @@ class _CourseCardState extends State<CourseCard> {
             ),
             child: Card(
               elevation: 15,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Hero(
-                      tag: widget.course.id,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                          ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Hero(
+                    tag: widget.course.id,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
                         ),
-                        child: CachedNetworkImage(
-                          height: imageHeight,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          imageUrl: widget.course.images,
-                          placeholder: (context, url) => const LottieLoading(),
-                          errorWidget: (context, url, error) => const Icon(
-                            Icons.error,
-                            size: 50,
-                            color: Colors.red,
-                          ),
+                      ),
+                      child: CachedNetworkImage(
+                        height: imageHeight,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        imageUrl: widget.course.images,
+                        placeholder: (context, url) => const LottieLoading(),
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.error,
+                          size: 50,
+                          color: Colors.red,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        widget.course.title,
-                        style: Styles.style18.copyWith(fontSize: fontSize),
-                        textAlign: TextAlign.center,
-                      ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      widget.course.title,
+                      style: Styles.style18.copyWith(fontSize: fontSize),
+                      textAlign: TextAlign.center,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 5),
-                      child: Text(
-                        widget.course.description,
-                        style: Styles.style13grey
-                            .copyWith(fontSize: fontSize * 0.9),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    child: Text(
+                      widget.course.description,
+                      style:
+                          Styles.style13grey.copyWith(fontSize: fontSize * 0.9),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 10),
-                    _buildActionButtons(context),
-                    _buildRatingInfo(context, screenWidth),
-                    _buildDateInfo(),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildActionButtons(context),
+                  _buildRatingInfo(context, screenWidth),
+                  _buildDateInfo(),
+                ],
               ),
             ),
           ),
@@ -130,21 +127,16 @@ class _CourseCardState extends State<CourseCard> {
             icon: Icons.restore,
             color: Colors.green,
             label: "استعادة",
-            onPressed: () {
-              context.read<AdminCubit>().restoreCourse(widget.course.id);
-            },
+            onPressed: () =>
+                Dialogs.showRestoreConfirmation(context, widget.course.id),
           ),
           _buildAnimatedButton(
-            context: context,
-            icon: Icons.delete_forever,
-            color: Colors.red,
-            label: "حذف نهائي",
-            onPressed: () {
-              context
-                  .read<AdminCubit>()
-                  .deleteCoursePermanently(widget.course.id);
-            },
-          ),
+              context: context,
+              icon: Icons.delete_forever,
+              color: Colors.red,
+              label: "حذف نهائي",
+              onPressed: () => Dialogs.showPermanentDeleteConfirmation(
+                  context, widget.course.id)),
         ],
       );
     } else {
@@ -169,8 +161,10 @@ class _CourseCardState extends State<CourseCard> {
                 icon: Icons.quiz,
                 color: AppColors.thirdColor.withOpacity(0.8),
                 label: AppTexts.addQuestions,
-                onPressed: () =>
-                    QuizActions.showAddQuizDialog(context, widget.course.id),
+                onPressed: () => QuizActions.showAddQuizDialog(
+                  context,
+                  widget.course.id,
+                ),
               ),
             ],
           ),
@@ -217,25 +211,33 @@ class _CourseCardState extends State<CourseCard> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             decoration: BoxDecoration(
-              color: isHovered ? Colors.transparent : color,
+              color: isHovered
+                  ? Colors.transparent
+                  : color, // Color inversion on hover
               border: Border.all(
-                color: isHovered ? color : Colors.transparent,
+                color: isHovered
+                    ? color
+                    : Colors.transparent, // Border appears on hover
               ),
               borderRadius: BorderRadius.circular(10),
             ),
             child: AnimatedScale(
-              scale: isHovered ? 1.1 : 1.0,
+              scale: isHovered ? 1.1 : 1.0, // Scale effect on hover
               duration: const Duration(milliseconds: 300),
               child: TextButton.icon(
                 icon: Icon(
                   icon,
-                  color: isHovered ? color : Colors.white,
+                  color: isHovered
+                      ? color
+                      : Colors.white, // Change icon color on hover
                 ),
                 label: Text(
                   label,
                   style: Styles.style18.copyWith(
                     fontSize: 17,
-                    color: isHovered ? color : Colors.white,
+                    color: isHovered
+                        ? color
+                        : Colors.white, // Change text color on hover
                   ),
                 ),
                 onPressed: onPressed,
@@ -265,7 +267,9 @@ class _CourseCardState extends State<CourseCard> {
               filledColor: Colors.amber,
               emptyColor: Colors.grey,
               halfFilledColor: Colors.amber,
-              size: screenWidth > 600 ? 32 : 24,
+              size: screenWidth > 600
+                  ? 32
+                  : 24, // Adjust star size based on screen width
             ),
           ),
           Text(
@@ -284,7 +288,8 @@ class _CourseCardState extends State<CourseCard> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
-            intl.DateFormat('yyyy-MM-dd').format(widget.course.date),
+            intl.DateFormat('yyyy-MM-dd')
+                .format(widget.course.date), // Format date
             style: Styles.style13grey.copyWith(fontSize: 14),
           ),
           const SizedBox(width: 5),

@@ -117,28 +117,48 @@ class CourseDialogs {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: AlertDialog(
-            title: const Text('هل أنت متأكد؟'),
-            content: const Text(
-                'هل تريد حذف هذه الدورة؟ هذا الإجراء لا يمكن التراجع عنه.'),
+            alignment: Alignment.center,
+            actionsAlignment: MainAxisAlignment.center,
+            title: Text(
+                textAlign: TextAlign.center,
+                'هل أنت متأكد؟',
+                style: Styles.style14
+                    .copyWith(fontSize: 19, fontWeight: FontWeight.bold)),
+            content: Text(
+                textAlign: TextAlign.center,
+                'هل تريد حذف هذه الدورة؟ هذا الإجراء لا يمكن التراجع عنه.',
+                style: Styles.style14.copyWith(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey)),
             actions: <Widget>[
-              TextButton(
+              ElevatedButton.icon(
+                icon: const Icon(Icons.cancel, color: Colors.grey),
                 onPressed: () =>
                     Navigator.of(context).pop(), // Close the dialog
-                child: const Text(
+                label: Text(
+                  textAlign: TextAlign.center,
                   'إلغاء',
-                  style: TextStyle(color: Colors.grey),
+                  style: Styles.style14
+                      .copyWith(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ),
-              TextButton(
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                icon: const Icon(Icons.delete, color: Colors.white),
                 onPressed: () {
                   context
                       .read<AdminCubit>()
                       .deleteCourse(courseId); // Call delete method
                   Navigator.of(context).pop(); // Close dialog after deletion
                 },
-                child: const Text(
+                label: Text(
+                  textAlign: TextAlign.center,
                   'حذف',
-                  style: TextStyle(color: Colors.red),
+                  style: Styles.style14.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
             ],

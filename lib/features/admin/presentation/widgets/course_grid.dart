@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ucourses/core/shared/widgets/style/error_loading.dart';
 import 'package:ucourses/features/student/domain/entities/course_entity.dart';
 
+import '../../../../core/constants/constants_exports.dart';
 import 'course_card.dart';
 
 class CourseGrid extends StatefulWidget {
@@ -57,7 +59,7 @@ class _CourseGridState extends State<CourseGrid>
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount = screenWidth > 1200
-        ? 4
+        ? 6
         : screenWidth > 800
             ? 4
             : screenWidth > 600
@@ -65,16 +67,27 @@ class _CourseGridState extends State<CourseGrid>
                 : 1;
 
     if (widget.courses.isEmpty) {
-      return const Center(child: Text("No courses available"));
+      return Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const ErrorLoading(),
+          Text(
+            AppTexts.noCoursesAvailable,
+            style: Styles.style20White,
+          ),
+        ],
+      ));
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 80,
-        left: 20,
-        right: 20,
-      ),
+    // Inside your CourseGrid's build method
+
+    return SingleChildScrollView(
       child: GridView.builder(
+        shrinkWrap: true, // Ensures the grid takes only necessary space
+        physics:
+            const NeverScrollableScrollPhysics(), // Prevents internal grid scrolling
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           childAspectRatio: screenWidth > 600 ? 14 / 16 : 16,
@@ -96,7 +109,7 @@ class _CourseGridState extends State<CourseGrid>
             },
             child: CourseCard(
               course: widget.courses[index],
-              isDeletedTab: widget.isDeletedTab,
+              isDeletedTab: widget.isDeletedTab, // Pass isDeletedTab here
             ),
           );
         },

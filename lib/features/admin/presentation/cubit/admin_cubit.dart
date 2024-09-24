@@ -168,9 +168,6 @@ class AdminCubit extends Cubit<AdminState> {
           .toList();
 
       print("Archived courses count: ${archivedCourses.length}");
-      for (var course in archivedCourses) {
-        print("Archived course title: ${course.title}, ID: ${course.id}");
-      }
 
       emit(AdminCoursesLoaded(archivedCourses)); // Load archived courses
     } catch (e) {
@@ -230,15 +227,32 @@ class AdminCubit extends Cubit<AdminState> {
   Future<void> restoreCourse(String courseId) async {
     try {
       print("Restoring course with ID: $courseId");
-      Course courseToRestore =
-          allCourses.firstWhere((course) => course.id == courseId);
+
+      // Fetch the course directly from Firestore
+      DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore
+          .instance
+          .collection('courses')
+          .doc(courseId)
+          .get();
+
+      if (!doc.exists || doc.data() == null) {
+        throw Exception("Course not found");
+      }
+
+      Course courseToRestore = CourseModel.fromFirestore(
+        doc.data()!,
+        doc.id,
+      );
 
       // Set isArchived to false
       Course updatedCourse = courseToRestore.copyWith(isArchived: false);
+
       await adminUseCases.editCourse(updatedCourse.id, updatedCourse);
 
       print("Course restored successfully.");
-      getDeletedCourses(); // Refresh the deleted courses list
+      await getDeletedCourses(); // Refresh the deleted courses list
+      // Optionally, refresh the courses list if needed
+      // await getCourses();
     } catch (e) {
       print("Error while restoring course: $e");
       emit(AdminError("Failed to restore course: $e"));

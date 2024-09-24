@@ -61,9 +61,7 @@ class _AdminCoursesScreenState extends State<AdminCoursesScreen>
         context.read<AdminCubit>().getDraftCourses(); // Fetch draft courses
         break;
       case "deleted":
-        context
-            .read<AdminCubit>()
-            .getDeletedCourses(); // Fetch deleted (archived) courses
+        context.read<AdminCubit>().getDeletedCourses(); // Fetch deleted courses
         break;
       case "all":
       default:
@@ -151,9 +149,10 @@ class _AdminCoursesScreenState extends State<AdminCoursesScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildTabButton("all", Icons.menu_book, "All Courses"),
-                  _buildTabButton("draft", Icons.drafts, "Drafts"),
-                  _buildTabButton("deleted", Icons.delete, "Deleted"),
+                  _buildTabButton("all", Icons.menu_book, AppTexts.allCourses),
+                  _buildTabButton("draft", Icons.drafts, AppTexts.newerCourses),
+                  _buildTabButton(
+                      "deleted", Icons.delete, AppTexts.deletedCourses),
                 ],
               ),
             ),
@@ -272,7 +271,11 @@ class _AdminCoursesScreenState extends State<AdminCoursesScreen>
                 },
                 builder: (context, state) {
                   if (state is AdminCoursesLoaded) {
-                    return CourseGrid(courses: state.courses);
+                    return CourseGrid(
+                      courses: state.courses,
+                      isDeletedTab:
+                          _selectedTab == "deleted", // Pass isDeletedTab here
+                    );
                   } else if (state is AdminLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else {

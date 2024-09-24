@@ -15,7 +15,6 @@ class Dialogs {
         TextEditingController(text: course?.description ?? '');
     final TextEditingController contentController =
         TextEditingController(text: course?.content ?? '');
-
     showDialog(
       context: context,
       builder: (context) {
@@ -116,6 +115,134 @@ class Dialogs {
                   style: TextStyle(color: Colors.red)),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  static void showRestoreConfirmation(BuildContext context, String courseId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            alignment: Alignment.center,
+            actionsAlignment: MainAxisAlignment.center,
+            title: const Text(
+              textAlign: TextAlign.center,
+              'تأكيد الاستعادة',
+              style: Styles.style18, // Use your custom Styles
+            ),
+            content: Text(
+              textAlign: TextAlign.center,
+              'هل أنت متأكد أنك تريد استعادة هذه الدورة؟',
+              style: Styles.style16.copyWith(
+                  fontSize: 17,
+                  fontWeight: FontWeight.normal), // Use your custom Styles
+            ),
+            actions: <Widget>[
+              ElevatedButton.icon(
+                icon: const Icon(Icons.cancel, color: Colors.grey),
+                onPressed: () =>
+                    Navigator.of(context).pop(), // Close the dialog
+                label: Text(
+                  textAlign: TextAlign.center,
+                  'إلغاء',
+                  style: Styles.style14.copyWith(
+                      color: Colors.grey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                icon: const Icon(Icons.restore, color: Colors.white),
+                onPressed: () {
+                  context.read<AdminCubit>().restoreCourse(courseId);
+                  Navigator.of(context).pop(); // Close dialog after action
+                },
+                label: Text(
+                  textAlign: TextAlign.center,
+                  'استعادة',
+                  style: Styles.style16.copyWith(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // Permanent Delete Confirmation Dialog
+  static void showPermanentDeleteConfirmation(
+      BuildContext context, String courseId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            actionsAlignment: MainAxisAlignment.center,
+            alignment: Alignment.center,
+            title: Text(
+              textAlign: TextAlign.center,
+              'تأكيد الحذف النهائي',
+              style: Styles.style18.copyWith(
+                  color: Colors.red, fontSize: 20), // Use your custom Styles
+            ),
+            content: Text(
+              textAlign: TextAlign.center,
+              'هل أنت متأكد أنك تريد حذف هذه الدورة نهائيًا؟ لا يمكن التراجع عن هذا الإجراء.',
+              style: Styles.style16.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold), // Use your custom Styles
+            ),
+            actions: <Widget>[
+              ElevatedButton.icon(
+                onPressed: () =>
+                    Navigator.of(context).pop(), // Close the dialog
+                label: Text(
+                  textAlign: TextAlign.center,
+                  'إلغاء',
+                  style: Styles.style14.copyWith(
+                      color: Colors.grey,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                icon: const Icon(
+                  Icons.cancel,
+                  color: Colors.grey,
+                ),
+              ),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                onPressed: () {
+                  context.read<AdminCubit>().deleteCoursePermanently(courseId);
+                  Navigator.of(context).pop(); // Close dialog after action
+                },
+                icon: const Icon(
+                  Icons.delete_forever,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  textAlign: TextAlign.center,
+                  'حذف نهائي',
+                  style: Styles.style16.copyWith(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

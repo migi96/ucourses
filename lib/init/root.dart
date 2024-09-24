@@ -119,7 +119,7 @@ class MyApp extends StatelessWidget {
                 switch (settings.name) {
                   case '/':
                     return PageTransition(
-                      child: const HomeScreen(),
+                      child: const AdminCoursesScreen(),
                       type: PageTransitionType.fade,
                       duration: const Duration(milliseconds: 300),
                     );
