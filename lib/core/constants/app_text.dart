@@ -24,7 +24,7 @@ class AppTexts {
   static const noCoursesAvailable = "لا يوجد دورات متاحة";
   static const courses = "الدورات";
   static const allCourses = "الكل";
-  static const newerCourses = "الدورات المسودة";
+  static const newerCourses = "الدورات الجديدة";
   static const deletedCourses = "الدورات المحذوفة";
   static const services = "الخدمات";
   static const testimonials = "الشهادات";
@@ -270,7 +270,7 @@ class AppTexts {
   static const delete = 'حذف';
   static const deleteCourse = 'حذف الدورة';
   static const editProfile = 'تعديل الملف الشخصي';
-  static const newerCourse = 'الدورة القديمة';
+  static const newerCourse = 'الدورات الجديدة';
   static const alphabetical = 'الترتيب الأبجدي';
 
   // Validator messages

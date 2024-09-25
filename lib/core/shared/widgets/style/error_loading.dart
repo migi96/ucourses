@@ -13,15 +13,10 @@ class ErrorLoading extends StatelessWidget {
       child: CircleAvatar(
         maxRadius: 90,
         backgroundColor: Colors.white,
-        child: GradientIcon(
-          firstGradientColor: AppColors.primaryColor,
-          secondGradientColor: AppColors.secondaryColor,
-          myChild: Lottie.asset(
-            '${ImageAssets.animationsPath}error.json', // Lottie animation path
-            fit: BoxFit.cover,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-          ),
+        child: Lottie.asset(
+          '${ImageAssets.animationsPath}error.json',
+          height: 100, // Lottie animation path
+          width: 100,
         ),
       ),
     );

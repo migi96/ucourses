@@ -73,6 +73,7 @@ class _CourseGridState extends State<CourseGrid>
         mainAxisSize: MainAxisSize.min,
         children: [
           const ErrorLoading(),
+          const SizedBox(height: 20),
           Text(
             AppTexts.noCoursesAvailable,
             style: Styles.style20White,

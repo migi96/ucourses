@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ucourses/core/constants/constants_exports.dart';
-import 'package:ucourses/core/shared/widgets/decorators/gradient_icon.dart';
 import 'package:ucourses/core/shared/widgets/style/lottie_loading.dart';
-import '../../../../core/shared/widgets/style/custom_appbar_actions.dart';
+import '../../../../core/shared/widgets/decorators/image_positions_widget.dart';
+import '../../../../core/shared/widgets/decorators/index.dart';
+import '../../../../init/widgets/widget_exports.dart';
 import '../../domain/entities/admin_entity.dart';
 import '../cubit/admin_profile_cubit.dart';
-import 'package:ucourses/core/shared/widgets/style/custom_appbar.dart';
 
 class AdminProfileScreen extends StatefulWidget {
   const AdminProfileScreen({super.key});
@@ -67,45 +67,100 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: AppTexts.profile,
-        actions: customAppBarActions(context),
-      ),
-      body: Column(
-        children: [
-          BlocBuilder<AdminProfileCubit, Admin?>(
-            builder: (context, admin) {
-              if (admin == null) {
-                return const Center(
-                    child: SizedBox(
-                        height: 120, width: 120, child: LottieLoading()));
-              }
-              return Directionality(
-                textDirection: TextDirection.rtl,
-                child: ListView(
-                  padding: const EdgeInsets.only(left: 50, right: 50, top: 30),
-                  children: <Widget>[
-                    _buildAnimatedAvatar(),
-                    const SizedBox(height: 50),
-                    _buildAnimatedCard(
-                      icon: Icons.person,
-                      title: AppTexts.userName,
-                      subtitle: admin.name,
-                    ),
-                    const SizedBox(height: 15),
-                    _buildAnimatedCard(
-                      icon: Icons.email,
-                      title: AppTexts.email,
-                      subtitle: admin.email,
-                    ),
-                    const SizedBox(height: 30),
-                    _buildAnimatedButton(context, admin),
-                  ],
+      body: GradientContainer(
+        myHeight: double.infinity,
+        myWidth: double.infinity,
+        firstGradientColor: AppColors.primaryColor,
+        secondGradientColor: AppColors.secondaryColor,
+        myChild: Stack(
+          children: [
+            const ImagePositions(
+              imagePath: '${ImageAssets.backgroundImagePath}t_three.png',
+              opacity: 0.05,
+            ),
+            HomeNavigation(
+              navItems: [
+                NavigationItem(
+                  title: AppTexts.courses,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/admin_courses');
+                  },
                 ),
-              );
-            },
-          ),
-        ],
+                NavigationItem(
+                  title: AppTexts.studentsList,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/admin_students');
+                  },
+                ),
+                NavigationItem(
+                    title: AppTexts.profile,
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/admin_profile');
+                    }),
+                NavigationItem(
+                  title: AppTexts.logout,
+                  onPressed: () {
+                    // logout(context);
+                  },
+                ),
+              ],
+            ),
+            BlocBuilder<AdminProfileCubit, Admin?>(
+              builder: (context, admin) {
+                if (admin == null) {
+                  return const Center(
+                      child: SizedBox(
+                          height: 120, width: 120, child: LottieLoading()));
+                }
+                return Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.1,
+                        vertical: MediaQuery.of(context).size.height * 0.1),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.3,
+                        vertical: MediaQuery.of(context).size.height * 0.3),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                        bottomLeft: Radius.circular(30),
+                        bottomRight: Radius.circular(30),
+                      ),
+                    ),
+                    child: Center(
+                      child: ListView(
+                        primary: false,
+                        shrinkWrap:
+                            true, // Allow the ListView to only take the space it needs
+
+                        children: <Widget>[
+                          _buildAnimatedAvatar(),
+                          const SizedBox(height: 50),
+                          _buildAnimatedCard(
+                            icon: Icons.person,
+                            title: AppTexts.userName,
+                            subtitle: admin.name,
+                          ),
+                          const SizedBox(height: 15),
+                          _buildAnimatedCard(
+                            icon: Icons.email,
+                            title: AppTexts.email,
+                            subtitle: admin.email,
+                          ),
+                          const SizedBox(height: 30),
+                          _buildAnimatedButton(context, admin),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -153,12 +208,15 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
           ),
         );
       },
-      child: Card(
-        elevation: 10,
-        child: ListTile(
-          leading: Icon(icon, color: Colors.deepOrange),
-          title: Text(title, style: Styles.style15grey),
-          subtitle: Text(subtitle),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.white, size: 40),
+        title: Text(
+          title,
+          style: Styles.style15grey.copyWith(color: Colors.white, fontSize: 23),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: Styles.style15grey.copyWith(color: Colors.white, fontSize: 17),
         ),
       ),
     );
@@ -176,15 +234,12 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
           ),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.only(left: 550, right: 550),
-        child: ElevatedButton.icon(
-          onPressed: () => _editAdminProfile(context, admin),
-          icon: const Icon(Icons.edit),
-          label: const Text(
-            AppTexts.editProfile,
-            style: Styles.style16,
-          ),
+      child: ElevatedButton.icon(
+        onPressed: () => _editAdminProfile(context, admin),
+        icon: const Icon(Icons.edit),
+        label: const Text(
+          AppTexts.editProfile,
+          style: Styles.style16,
         ),
       ),
     );
